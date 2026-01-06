@@ -1,10 +1,12 @@
 ﻿#ifndef FALLINGSAND_RENDERER_H
 #define FALLINGSAND_RENDERER_H
+
 #include <memory>
 
 #include "shader.h"
-#include "../simulation/simulation.h"
+#include "FallingSand/simulation/simulation.h"
 
+// Represents a color in RGBA format
 struct Color {
   uint8_t r, g, b, a;
 };
@@ -13,24 +15,13 @@ class Renderer {
 public:
   Renderer();
   void init(const Simulation &sim);
-  void render();
-  void update(const Simulation &sim);
+  void render(const Simulation &sim);
   void cleanup();
-
-  uint32_t color_to_agbr(const Color &color);
 
 private:
   unsigned int VAO, VBO, EBO;
-  std::unique_ptr<Shader> shader;
+  std::unique_ptr<Shader> graphics_shader;
   unsigned int texture_id_;
-  std::vector<uint32_t> pixels;
-
-  const Color yellow = {255, 255, 0, 255};
-  const Color blue = {27, 81, 255, 200};
-  const Color grey = {149, 149, 149, 255};
-  const Color gas = {42, 132, 24, 80};
-  const Color black = {0, 0, 0, 255};
-  const Color debug = {255, 0, 255, 255};
 };
 
 #endif //FALLINGSAND_RENDERER_H

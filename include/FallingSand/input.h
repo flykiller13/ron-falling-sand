@@ -1,5 +1,7 @@
 ﻿#ifndef FALLINGSAND_INPUT_H
 #define FALLINGSAND_INPUT_H
+#include "renderer/renderer.h"
+
 #include <GLFW/glfw3.h>
 
 #include "simulation/simulation.h"

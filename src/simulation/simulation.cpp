@@ -1,100 +1,81 @@
 ﻿
 #include "FallingSand/simulation/simulation.h"
-
+#include <glad/glad.h>
+#include <filesystem>
 #include <random>
+#include "FallingSand/renderer/shader.h"
 
 Simulation::Simulation(int sim_width, int sim_height)
-  : grid(sim_width, sim_height), next_grid(sim_width, sim_height), gen(rd()),
-    dis(0, 1) {
+  : grid(sim_width, sim_height), next_grid(sim_width, sim_height),
+    current_ssbo_idx(0),
+    gen(rd()), dis(0, 1) {
 }
 
-void Simulation::update(double delta_time) {
-  delta_time = std::min(delta_time, MAX_DELTA_TIME);
-  accumulator += delta_time;
-
-  // Tick only in fixed time steps
-  while (accumulator >= fixed_delta_time) {
-    accumulator -= fixed_delta_time;
-    simulation_tick();
+void Simulation::init() {
+  // Build and compile shader program
+  std::filesystem::path projectRoot = std::filesystem::current_path();
+  while (!std::filesystem::exists(projectRoot / "shaders") && projectRoot.
+         has_parent_path()) {
+    projectRoot = projectRoot.parent_path();
   }
+  std::filesystem::path shaderPath = projectRoot / "shaders";
+  std::string compute_path = (shaderPath / "shader.comp").string();
+  compute_shader = std::make_unique<Shader>(compute_path.c_str());
+
+  // Create 2 SSBOs
+  glGenBuffers(2, SSBO);
+  for (int i = 0; i < 2; i++) {
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBO[i]);
+    glBufferData(
+        GL_SHADER_STORAGE_BUFFER,
+        get_grid_width() * get_grid_height() * sizeof(Cell), nullptr,
+        GL_DYNAMIC_DRAW); // why dynamic copy?
+  }
+
+  // Initialize SSBOs with simulation data
+  // const std::vector<Cell> &cells = sim.get_cells();
+  // glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBO[0]);
+  // glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0,
+  //                 cells.size() * sizeof(Cell), cells.data());
 }
 
-void Simulation::simulation_tick() {
-  // Copy current to next
-  for (int x = 0; x < grid.width; x++) {
-    for (int y = 0; y < grid.height; y++) {
-      next_grid.set_cell(x, y, getCell(x, y).type);
-    }
-  }
+void Simulation::update() {
+  // Run compute shader to update simulation on the GPU
+  compute_shader->use();
 
-  active_cell_count = 0;
+  // Set uniforms
+  compute_shader->set_int("width", get_grid_width());
+  compute_shader->set_int("height", get_grid_height());
+  compute_shader->set_int("debugWorkgroupBorders", 1);
 
-  // Iterate over grid
-  for (int x = 0; x < grid.width; x++) {
-    for (int y = 0; y < grid.height; y++) {
-      Cell curr = getCell(x, y);
+  // Bind input and output buffers
+  unsigned int input_buffer_idx = current_ssbo_idx;
+  unsigned int output_buffer_idx = 1 - current_ssbo_idx;
+  glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, SSBO[input_buffer_idx]);
+  glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, SSBO[output_buffer_idx]);
 
-      if (curr.type != CellType::Empty)
-        active_cell_count++;
+  // Dispatch compute shader
+  int num_groups_x = (get_grid_width());
+  int num_groups_y = (get_grid_height());
 
-      int dir = (dis(gen) == 0) ? -1 : 1; // Randomly choose left or right
+  // Pass 1: Process even workgroups (checkerboard pattern)
+  compute_shader->set_int("pass", 0);
+  glDispatchCompute(num_groups_x, num_groups_y, 1);
+  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-      switch (curr.type) {
-      case CellType::Sand:
-        if (can_move_to(x, y - 1)) {
-          // Check below
-          move_to(x, y, x, y - 1);
-        } else {
-          if (can_move_to(x + dir, y - 1)) {
-            // Check left/right-down
-            move_to(x, y, x + dir, y - 1);
-          }
-        }
-        break;
+  // Pass 2: Process odd workgroups (checkerboard pattern)
+  // compute_shader->set_int("pass", 1);
+  // glDispatchCompute(num_groups_x, num_groups_y, 1);
+  // glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-      case CellType::Water: // Water is the same as sand but we also
-        // check left and right
-        if (can_move_to(x, y - 1)) {
-          // Check below
-          move_to(x, y, x, y - 1);
-        } else {
-          if (can_move_to(x + dir, y - 1)) {
-            // Check left/right-down
-            move_to(x, y, x + dir, y - 1);
-          } else {
-            if (can_move_to(x + dir, y)) {
-              // Check left/right
-              move_to(x, y, x + dir, y);
-            }
-          }
-        }
-        break;
+  // Swap buffers
+  current_ssbo_idx = output_buffer_idx;
 
-      case CellType::Gas: // Farts(Smoke) is the same as water but goes up
-        if (can_move_to(x, y + 1)) {
-          // Check above
-          move_to(x, y, x, y + 1);
-        } else {
-          if (can_move_to(x + dir, y + 1)) {
-            // Check left/right-up
-            move_to(x, y, x + dir, y + 1);
-          } else {
-            if (can_move_to(x + dir, y)) {
-              // Check left/right
-              move_to(x, y, x + dir, y);
-            }
-          }
-        }
-        break;
+  glUnmapBuffer(GL_SHADER_STORAGE_BUFFER); // Unbind ssbo
+}
 
-      default:
-        break;
-      }
-    }
-  }
-
-  // swap buffers
-  std::swap(grid.cells, next_grid.cells);
+void Simulation::cleanup() {
+  glDeleteBuffers(2, SSBO);
 }
 
 void Simulation::clear() {
@@ -105,23 +86,27 @@ void Simulation::clear() {
   }
 }
 
-bool Simulation::is_in_bounds(int x, int y) const {
-  return x >= 0 && x < grid.width && y >= 0 && y < grid.height;
+void Simulation::set_cell(int x, int y, CellType type) {
+  CellType new_cell = {type};
+  size_t offset = (y * 400 + x) * sizeof(Cell);
+
+  // Update BOTH buffers so the change persists across the swap
+  for (int i = 0; i < 2; ++i) {
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBO[i]);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, sizeof(Cell), &new_cell);
+  }
+  // Unbind buffer
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-bool Simulation::can_move_to(int x, int y) const {
-  // Need to check next grid too since we write only to next
-  return is_in_bounds(x, y) && (getCell(x, y).type == CellType::Empty) &&
-         (next_grid.get_cell(x, y).type == CellType::Empty);
+const uint32_t Simulation::get_active_cell_count() const {
+  uint32_t active_cell_count = 0;
+  for (int x = 0; x < grid.width; x++) {
+    for (int y = 0; y < grid.height; y++) {
+      if (getCell(x, y).type != CellType::Empty)
+        active_cell_count++;
+    }
+  }
+  return active_cell_count;
 }
 
-void Simulation::move_to(int fromX, int fromY, int toX, int toY) {
-  if (!is_in_bounds(fromX, fromY) || !is_in_bounds(toX, toY))
-    return;
-
-  CellType fromType = getCell(fromX, fromY).type;
-  CellType toType = getCell(toX, toY).type;
-
-  next_grid.set_cell(toX, toY, fromType);
-  next_grid.set_cell(fromX, fromY, toType);
-}

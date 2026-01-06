@@ -1,6 +1,8 @@
 ﻿#ifndef FALLINGSAND_APP_H
 #define FALLINGSAND_APP_H
 
+#include <glad/glad.h>  // must be included before GLFW
+#include <GLFW/glfw3.h>
 #include "renderer/renderer.h"
 #include "input.h"
 #include "ui.h"

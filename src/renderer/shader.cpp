@@ -1,8 +1,9 @@
 ﻿#include "FallingSand/renderer/shader.h"
+#include <glad/glad.h>
 
 
-Shader::Shader(const char *vertexPath, const char *fragmentPath) {
-  // 1. retrieve the vertex/fragment source code from filePath
+Shader::Shader(const char *vertex_path, const char *fragment_path) {
+  // Retrieve the source code from filePath
   std::string vertexCode;
   std::string fragmentCode;
   std::ifstream vShaderFile;
@@ -14,13 +15,13 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) {
 
   try {
     // open files
-    vShaderFile.open(vertexPath);
-    fShaderFile.open(fragmentPath);
+    vShaderFile.open(vertex_path);
+    fShaderFile.open(fragment_path);
 
     std::stringstream vShaderStream, fShaderStream;
 
-    vShaderFile.clear();
-    vShaderFile.seekg(0, std::ios::beg);
+    // vShaderFile.clear();
+    // vShaderFile.seekg(0, std::ios::beg);
 
     // read file's buffer contents into streams
     vShaderStream << vShaderFile.rdbuf();
@@ -34,21 +35,17 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) {
     vShaderFile.close();
     fShaderFile.close();
 
-    std::cout << "Vertex shader loaded successfully from: " << vertexPath <<
-        std::endl;
-    std::cout << "Fragment shader loaded successfully from: " << fragmentPath <<
-        std::endl;
   } catch (std::ifstream::failure &e) {
     std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
     std::cout << "Exception: " << e.what() << std::endl;
-    std::cout << "Vertex path: " << vertexPath << std::endl;
-    std::cout << "Fragment path: " << fragmentPath << std::endl;
+    std::cout << "Vertex path: " << vertex_path << std::endl;
+    std::cout << "Fragment path: " << fragment_path << std::endl;
   }
 
   const char *vShaderCode = vertexCode.c_str();
   const char *fShaderCode = fragmentCode.c_str();
 
-  // 2. compile shaders
+  // Compile shaders
   unsigned int vertex, fragment;
 
   // vertex Shader
@@ -75,6 +72,56 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) {
   glDeleteShader(fragment);
 }
 
+Shader::Shader(const char *compute_path) {
+  // Retrieve the source code from filePath
+  std::string computeCode;
+  std::ifstream cShaderFile;
+
+  // ensure ifstream objects can throw exceptions:
+  cShaderFile.exceptions(std::ifstream::badbit);
+
+  try {
+    // open files
+    cShaderFile.open(compute_path);
+
+    std::stringstream cShaderStream;
+
+    // read file's buffer contents into streams
+    cShaderStream << cShaderFile.rdbuf();
+
+    // convert stream into string
+    computeCode = cShaderStream.str();
+
+    // close file handlers
+    cShaderFile.close();
+
+  } catch (std::ifstream::failure &e) {
+    std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
+    std::cout << "Exception: " << e.what() << std::endl;
+    std::cout << "Compute path: " << compute_path << std::endl;
+  }
+
+  const char *cShaderCode = computeCode.c_str();
+
+  // Compile shaders
+  unsigned int compute;
+
+  // compute shader
+  compute = glCreateShader(GL_COMPUTE_SHADER);
+  glShaderSource(compute, 1, &cShaderCode, nullptr);
+  glCompileShader(compute);
+  check_compile_errors(compute, "COMPUTE");
+
+  // Compute shader Program (compute only)
+  id_ = glCreateProgram();
+  glAttachShader(id_, compute);
+  glLinkProgram(id_);
+  check_compile_errors(id_, "COMPUTE_PROGRAM");
+
+  // delete the shaders as they're linked into our program now
+  glDeleteShader(compute);
+}
+
 void Shader::use() {
   glUseProgram(id_);
 }
@@ -95,7 +142,7 @@ void Shader::check_compile_errors(unsigned int shader, std::string type) {
   int success;
   char infoLog[1024];
 
-  if (type != "PROGRAM") {
+  if (type != "PROGRAM" && type != "COMPUTE_PROGRAM") {
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
       glGetShaderInfoLog(shader, 1024, nullptr, infoLog);
@@ -115,7 +162,8 @@ void Shader::check_compile_errors(unsigned int shader, std::string type) {
           "\n -- --------------------------------------------------- -- "
           << std::endl;
     } else {
-      std::cout << "Shader program linked successfully" << std::endl;
+      std::cout << "Shader program linked successfully (" << type << ")" <<
+          std::endl;
     }
   }
 }

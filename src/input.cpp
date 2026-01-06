@@ -14,16 +14,12 @@ void Input::apply_brush(GLFWwindow *window, Simulation &sim, int brush_size,
   glfwGetWindowSize(window, &width, &height);
   double xpos, ypos;
   glfwGetCursorPos(window, &xpos, &ypos);
-  int x_ratio = width / sim.get_grid_width();
-  int y_ratio = height / sim.get_grid_height();
+  int x_ratio = width / 400;
+  int y_ratio = height / 400;
   int grid_x = static_cast<int>(xpos) / x_ratio;
   int grid_y = static_cast<int>(height - ypos) / y_ratio;
 
-  for (int x = grid_x - brush_size; x <= grid_x + brush_size; x++) {
-    for (int y = grid_y - brush_size; y <= grid_y + brush_size; y++) {
-      sim.set_cell(x, y, type);
-    }
-  }
+  sim.set_cell(grid_x, grid_y, type);
 }
 
 Input::Input() : window_(nullptr) {

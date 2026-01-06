@@ -1,7 +1,5 @@
 ﻿
 #include "FallingSand/app.h"
-#include <glad/glad.h> // must be included before GLFW
-#include <GLFW/glfw3.h>
 
 #include <iostream>
 
@@ -56,6 +54,7 @@ bool App::init() {
   glfwSetFramebufferSizeCallback(window_, framebuffer_size_callback);
 
   // Initialize
+  sim.init();
   renderer.init(sim);
   input.init(window_);
   ui.init(window_);
@@ -74,9 +73,8 @@ void App::run() {
     last_frame = current_frame;
 
     input.update(sim, ui.brush_type, ui.brush_size);
-    sim.update(delta_time);
-    renderer.update(sim);
-    renderer.render();
+    sim.update();
+    renderer.render(sim);
     ui.update(sim);
 
     // Swap buffers and poll IO events
