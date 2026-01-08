@@ -20,7 +20,6 @@ void UI::init(GLFWwindow *window) {
 }
 
 void UI::update(Simulation &sim) {
-  // UI
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
@@ -38,12 +37,9 @@ void UI::update(Simulation &sim) {
 
   // Simulation
   ImGui::SeparatorText("Simulation");
-  // Stats
   ImGui::Text("Frame Time: %f fps, %.3f ms", ImGui::GetIO().Framerate,
               1000.0f / ImGui::GetIO().Framerate);
-  ImGui::Text("Delta Time: %.3f ms", ImGui::GetIO().DeltaTime * 1000.0f);
   ImGui::Text("Grid: %d x %d", sim.get_grid_width(), sim.get_grid_height());
-  ImGui::Text("Active Particles: %d", sim.get_active_cell_count());
   // Clear simulation
   if (ImGui::Button("Clear"))
     sim.clear();

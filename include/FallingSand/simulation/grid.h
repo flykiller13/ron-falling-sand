@@ -6,8 +6,8 @@
 
 enum class CellType {
   Empty,
-  Sand,
   Stone,
+  Sand,
   Water,
   Gas,
 };
@@ -16,6 +16,7 @@ struct Cell {
   CellType type;
 };
 
+// Might be used to keep a CPU side simulation
 class Grid {
 public:
   Grid(int width, int height);

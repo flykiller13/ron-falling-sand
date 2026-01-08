@@ -3,6 +3,13 @@ out vec4 FragColor;
 
 in vec2 TexCoord;
 
+// Cell type constants
+const int EMPTY = 0;
+const int STONE = 1;
+const int SAND = 2;
+const int WATER = 3;
+const int GAS = 4;
+
 struct Cell {
     int type;
 };
@@ -16,17 +23,15 @@ uniform int height;
 
 vec4 getColorForCell(int type) {
     switch (type) {
-        case 1:// Sand
+        case SAND:
         return vec4(1.0, 1.0, 0.0, 1.0);// Yellow
-        case 2:// Water
-        return vec4(27.0/255.0, 81.0/255.0, 1.0, 200.0/255.0);// Blue
-        case 3:// Gas
-        return vec4(42.0/255.0, 132.0/255.0, 24.0/255.0, 80.0/255.0);// Gas
-        case 4:// Stone
-        return vec4(149.0/255.0, 149.0/255.0, 149.0/255.0, 1.0);// Grey
-        case 5:// Debug - Workgroup border
-        return vec4(1.0, 1.0, 1.0, 1.0);// White
-        case 0:// Empty
+        case WATER:
+        return vec4(0.0, 0.0, 1.0, 0.7);// Blue
+        case STONE:
+        return vec4(0.6, 0.6, 0.6, 1.0);// Grey
+        case GAS:
+        return vec4(0.2, 0.5, 0.1, 0.3);// Gas
+        case EMPTY:
         return vec4(0.0, 0.0, 0.0, 1.0);// Black
         default :// Debug
         return vec4(1.0, 0.0, 1.0, 1.0);// Magenta

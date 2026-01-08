@@ -10,16 +10,24 @@ void Input::apply_brush(GLFWwindow *window, Simulation &sim, int brush_size,
   if (ImGui::GetIO().WantCaptureMouse)
     return;
 
-  int width, height;
-  glfwGetWindowSize(window, &width, &height);
+  // Convert mouse position to grid position
+  int window_width, window_height;
+  glfwGetWindowSize(window, &window_width, &window_height);
   double xpos, ypos;
   glfwGetCursorPos(window, &xpos, &ypos);
-  int x_ratio = width / 400;
-  int y_ratio = height / 400;
-  int grid_x = static_cast<int>(xpos) / x_ratio;
-  int grid_y = static_cast<int>(height - ypos) / y_ratio;
+  double x_ratio = static_cast<double>(window_width) / static_cast<double>(sim.
+                     get_grid_width());
+  double y_ratio = static_cast<double>(window_height) / static_cast<double>(sim.
+                     get_grid_height());
+  int grid_x = static_cast<int>(xpos / x_ratio);
+  int grid_y = static_cast<int>((window_height - ypos) / y_ratio);
 
-  sim.set_cell(grid_x, grid_y, type);
+  // Sets cells in a box around the mouse position
+  for (int x = grid_x - brush_size; x < grid_x + brush_size; x++) {
+    for (int y = grid_y - brush_size; y < grid_y + brush_size; y++) {
+      sim.set_cell(x, y, type);
+    }
+  }
 }
 
 Input::Input() : window_(nullptr) {
@@ -29,7 +37,7 @@ void Input::init(GLFWwindow *glfw_window) {
   window_ = glfw_window;
 }
 
-void Input::update(Simulation &sim, CellType brushType, int brushSize) {
+void Input::update(Simulation &sim, CellType brush_type, int brush_size) {
   int width, height;
   glfwGetWindowSize(window_, &width, &height);
 
@@ -39,8 +47,8 @@ void Input::update(Simulation &sim, CellType brushType, int brushSize) {
 
   // LMB - Draw selected material
   if (glfwGetMouseButton(window_, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-    apply_brush(window_, sim, brushSize, brushType);
+    apply_brush(window_, sim, brush_size, brush_type);
   // RMB - Draw Stone
   if (glfwGetMouseButton(window_, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-    apply_brush(window_, sim, brushSize, CellType::Stone);
+    apply_brush(window_, sim, stone_brush_size, CellType::Stone);
 }

@@ -11,12 +11,15 @@ class Input {
 public:
   Input();
   void init(GLFWwindow *glfw_window);
-  void update(Simulation &sim, CellType brushType, int brushSize);
+  // Sets the GLFW window for input processing
+  void update(Simulation &sim, CellType brush_type, int brush_size);
+  // Processes inputs
   void apply_brush(GLFWwindow *window, Simulation &sim, int brush_size,
-                   CellType type);
+                   CellType type); // Draws the selected brush on the sim
 
 private:
   GLFWwindow *window_;
+  const int stone_brush_size = 3;
 };
 
 

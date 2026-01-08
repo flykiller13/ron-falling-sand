@@ -11,37 +11,31 @@ class Shader;
 class Simulation {
 public:
   Simulation(int sim_width, int sim_height);
-  void init();
+  void init(); // Compiles the compute shader program and initializes 2 SSBOs
+
+  // Updates the simulation 1 time. Runs the compute shader twice.
   void update();
-  void cleanup();
-  void clear();
+
+  void cleanup(); // Deletes buffers
 
   unsigned int get_current_ssbo() const { return SSBO[current_ssbo_idx]; }
 
-  int get_grid_width() const { return grid.width; }
-  int get_grid_height() const { return grid.height; }
-
-  const std::vector<Cell> &get_cells() const { return grid.cells; }
+  int get_grid_width() const { return width; }
+  int get_grid_height() const { return height; }
 
   void set_cell(int x, int y, CellType type);
 
-  const Cell &getCell(int x, int y) const {
-    return grid.cells[x + y * grid.width];
-  }
-
-  const uint32_t get_active_cell_count() const;
+  void clear(); // Clears the simulation - All cells are set to empty.
 
 private:
-  // We use a double buffer method - Data is read from grid and written to next_grid
-  Grid grid;
-  Grid next_grid; // Buffer grid
+  int width, height;
 
   // Compute shader
   std::unique_ptr<Shader> compute_shader;
   unsigned int SSBO[2]; // 2 ssbos for double buffering
   unsigned int current_ssbo_idx;
 
-  // random - for choosing a direction
+  // random - for choosing a direction ( NOT USED IN GPU PORT )
   std::random_device rd;
   std::mt19937 gen;
   std::uniform_int_distribution<> dis;

@@ -77,16 +77,8 @@ void Renderer::init(const Simulation &sim) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-  // Create texture - We update the texture pixels with the simulation grid and display
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sim.get_grid_width(),
-  //              sim.get_grid_height(),
-  //              0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-
   // Generate mipmaps
   glGenerateMipmap(GL_TEXTURE_2D);
-
-  // Initialize pixel buffer
-  // pixels.resize(sim.get_grid_width() * sim.get_grid_height());
 }
 
 void Renderer::render(const Simulation &sim) {

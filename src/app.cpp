@@ -5,7 +5,6 @@
 
 #include "FallingSand/input.h"
 
-// Updates the viewport on window resize
 void App::framebuffer_size_callback(GLFWwindow *window, int width,
                                     int height) {
   glViewport(0, 0, width, height);
@@ -17,7 +16,8 @@ void App::framebuffer_size_callback(GLFWwindow *window, int width,
   }
 }
 
-App::App() : input(), sim(400, 400), renderer(), ui(), window_(nullptr) {
+App::App() : input(), sim(400, 400), renderer(), ui(), window_(nullptr),
+             window_width(1920), window_height(1080) {
 }
 
 bool App::init() {
@@ -65,7 +65,7 @@ bool App::init() {
 void App::run() {
   last_frame = glfwGetTime();
 
-  // Render loop
+  // Main app loop
   while (!glfwWindowShouldClose(window_)) {
 
     current_frame = glfwGetTime();
@@ -84,6 +84,7 @@ void App::run() {
 }
 
 void App::cleanup() {
+  // Terminates simulation objects
   ui.terminate();
   renderer.cleanup();
 
