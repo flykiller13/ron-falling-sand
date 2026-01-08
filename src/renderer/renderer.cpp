@@ -149,7 +149,7 @@ void Renderer::cleanup() {
 }
 
 uint32_t Renderer::color_to_agbr(const Color &color) {
-  // convert color (RGBA) to int32 (ABGR)
+
   return (static_cast<uint32_t>(color.a << 24)
           | static_cast<uint32_t>(color.b << 16)
           | static_cast<uint32_t>(color.g << 8)

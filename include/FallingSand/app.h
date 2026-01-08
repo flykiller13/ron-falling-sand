@@ -11,13 +11,14 @@
 class App {
 public:
   App();
-  bool init();
-  void run();
-  void cleanup();
+  bool init(); // Initializes GLFW window and simulation objects
+  void run(); // Runs the main simulation loop
+  void cleanup(); // Terminates GLFW window and simulation objects
 
 private:
   static void framebuffer_size_callback(GLFWwindow *window, int width,
                                         int height);
+  // Updates the viewport on window resize
 
   Input input;
   Simulation sim;

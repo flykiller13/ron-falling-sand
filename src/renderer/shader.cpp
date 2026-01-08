@@ -1,8 +1,8 @@
 ﻿#include "FallingSand/renderer/shader.h"
 
 
-Shader::Shader(const char *vertexPath, const char *fragmentPath) {
-  // 1. retrieve the vertex/fragment source code from filePath
+Shader::Shader(const char *vertex_path, const char *fragment_path) {
+  // retrieve the vertex/fragment source code from filePath
   std::string vertexCode;
   std::string fragmentCode;
   std::ifstream vShaderFile;
@@ -14,8 +14,8 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) {
 
   try {
     // open files
-    vShaderFile.open(vertexPath);
-    fShaderFile.open(fragmentPath);
+    vShaderFile.open(vertex_path);
+    fShaderFile.open(fragment_path);
 
     std::stringstream vShaderStream, fShaderStream;
 
@@ -34,21 +34,22 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) {
     vShaderFile.close();
     fShaderFile.close();
 
-    std::cout << "Vertex shader loaded successfully from: " << vertexPath <<
+    std::cout << "Vertex shader loaded successfully from: " << vertex_path <<
         std::endl;
-    std::cout << "Fragment shader loaded successfully from: " << fragmentPath <<
+    std::cout << "Fragment shader loaded successfully from: " << fragment_path
+        <<
         std::endl;
   } catch (std::ifstream::failure &e) {
     std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
     std::cout << "Exception: " << e.what() << std::endl;
-    std::cout << "Vertex path: " << vertexPath << std::endl;
-    std::cout << "Fragment path: " << fragmentPath << std::endl;
+    std::cout << "Vertex path: " << vertex_path << std::endl;
+    std::cout << "Fragment path: " << fragment_path << std::endl;
   }
 
   const char *vShaderCode = vertexCode.c_str();
   const char *fShaderCode = fragmentCode.c_str();
 
-  // 2. compile shaders
+  // compile shaders
   unsigned int vertex, fragment;
 
   // vertex Shader

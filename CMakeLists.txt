@@ -35,8 +35,6 @@ add_executable(FallingSand
         src/input.cpp
         src/app.cpp
         src/main.cpp
-        include/FallingSand/renderer/compute_shader.cpp
-        include/FallingSand/renderer/compute_shader.h
 )
 
 # Include directories

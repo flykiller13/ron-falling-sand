@@ -8,10 +8,11 @@
 class Input {
 public:
   Input();
-  void init(GLFWwindow *glfw_window);
+  void init(GLFWwindow *glfw_window); // Sets the GLFW window
   void update(Simulation &sim, CellType brushType, int brushSize);
+  // Processes inputs
   void apply_brush(GLFWwindow *window, Simulation &sim, int brush_size,
-                   CellType type);
+                   CellType type); // Draws the chosen cell type in the simulation
 
 private:
   GLFWwindow *window_;

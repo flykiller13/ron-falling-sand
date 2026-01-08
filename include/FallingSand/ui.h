@@ -10,9 +10,9 @@ class Simulation;
 class UI {
 public:
   UI();
-  void init(GLFWwindow *window);
-  void update(Simulation &sim);
-  void terminate();
+  void init(GLFWwindow *window); // Initializes ImGui
+  void update(Simulation &sim); // Draws the UI
+  void terminate(); // Terminates ImGui
 
   bool show_window = true;
   CellType brush_type = CellType::Sand;

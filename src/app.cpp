@@ -7,7 +7,6 @@
 
 #include "FallingSand/input.h"
 
-// Updates the viewport on window resize
 void App::framebuffer_size_callback(GLFWwindow *window, int width,
                                     int height) {
   glViewport(0, 0, width, height);

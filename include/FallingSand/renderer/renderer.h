@@ -13,17 +13,22 @@ class Renderer {
 public:
   Renderer();
   void init(const Simulation &sim);
-  void render();
+  // Initializes shader, VAO, VBO, EBO, Texture quad and pixel array
+  // TODO separate
+  void render(); // Renders the quad
   void update(const Simulation &sim);
-  void cleanup();
+  // Updates the pixel array and the texture quad with the simulation data
+  void cleanup(); // Deletes gl objects
 
   uint32_t color_to_agbr(const Color &color);
+  // Converts color (RGBA) to int32 (ABGR)
 
 private:
   unsigned int VAO, VBO, EBO;
   std::unique_ptr<Shader> shader;
   unsigned int texture_id_;
   std::vector<uint32_t> pixels;
+  // Pixel data array - Holds the colors that are passed to the quad
 
   const Color yellow = {255, 255, 0, 255};
   const Color blue = {27, 81, 255, 200};

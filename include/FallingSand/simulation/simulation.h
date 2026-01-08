@@ -9,9 +9,9 @@ class Simulation {
 public:
   Simulation(int sim_width, int sim_height);
   void update(double delta_time);
-  void clear();
-
+  // Runs ticks of the simulation based on delta time
   void simulation_tick();
+  void clear(); // Clears the sim - Sets all cells to empty
 
   int get_grid_width() const { return grid.width; }
   int get_grid_height() const { return grid.height; }
@@ -28,12 +28,12 @@ public:
 
   bool is_in_bounds(int x, int y) const;
   bool can_move_to(int x, int y) const; // Returns true if the cell is empty
-  void move_to(int fromX, int fromY, int toX, int toY);
+  void move_to(int fromX, int fromY, int toX, int toY); // Swaps cells
 
 private:
   // We use a double buffer method - Data is read from grid and written to next_grid
   Grid grid;
-  Grid next_grid; // Buffer grid
+  Grid next_grid;
   uint32_t active_cell_count = 0;
 
   double accumulator = 0.0;
