@@ -1,12 +1,14 @@
 # Falling Sand Simulation
 
-![Falling Sand Demo](main_demo.gif)
+![Falling Sand Demo](resources/main_demo.gif)
 
 *"From ashes to dust, from CPU to GPU"*
 
-A falling sand cellular automata simulation built with C++ and OpenGL. Experiment with different particle types, watch them interact with physics-based rules, and paint your own pixel art sandbox.
+A falling sand cellular automata simulation built with C++ and OpenGL. Experiment with different particle types, watch
+them interact with physics-based rules, and paint your own pixel art sandbox.
 
-I've always been interested in falling sand simulations, but [Noita](https://noitagame.com/) finally inspired me to make one.
+I've always been interested in falling sand simulations, but [Noita](https://noitagame.com/) finally inspired me to make
+one.
 
 ## Branches
 
@@ -14,32 +16,35 @@ This project contains two implementations, each with its own strengths:
 
 ### 🖥️ [CPU Branch](link-to-cpu-branch)
 
-The original implementation that runs entirely on the CPU. Perfect for understanding the core simulation logic and experimenting with new particle types.
+The original implementation that runs entirely on the CPU. Perfect for understanding the core simulation logic and
+experimenting with new particle types.
 
 - **Performance**: Runs **1000x1000 grids** at 60 fps
-- **Pros**: 
-  - Simple, intuitive codebase
-  - Easy to implement new rules and particle types
-  - Supports random direction selection for natural-looking behavior
+- **Pros**:
+    - Simple, intuitive codebase
+    - Easy to implement new rules and particle types
+    - Supports random direction selection for natural-looking behavior
 - **Cons**:
     - Low performance
 
 ### 🚀 [GPU Branch](link-to-gpu-branch)
 
-A high-performance GPU-accelerated version using OpenGL compute shaders. Leverages your GPU's parallel processing power for massive simulations.
+A high-performance GPU-accelerated version using OpenGL compute shaders. Leverages your GPU's parallel processing power
+for massive simulations.
 
 - **Performance**: Runs **2560x1440 grids** (3,686,400 cells!) at 60 fps
 - **Pros**:
-  - Massive performance boost
-  - Handles huge simulations smoothly
-  - Direct GPU rendering pipeline
-  
+    - Massive performance boost
+    - Handles huge simulations smoothly
+    - Direct GPU rendering pipeline
+
 - **Cons**:
     - Uses unintuitive "pull method" to avoid race conditions
 
 ## Features
 
 Both branches support:
+
 - **Sand** - Falls down and spreads to the sides
 - **Water** - Flows horizontally when it can't fall
 - **Stone** - Static walls and structures
@@ -50,6 +55,7 @@ Both branches support:
 ## Quick Start
 
 Choose a branch above and follow its installation instructions. Both require:
+
 - C++20 compatible compiler
 - OpenGL 4.3+
 - GLFW3
@@ -68,7 +74,9 @@ See the individual branch READMEs for detailed setup instructions.
 
 ## Inspiration
 
-This project was heavily inspired by [Noita](https://noitagame.com/), a physics-based action game with incredible particle simulation. The [GDC talk on Noita's simulation](https://www.youtube.com/watch?v=prXuyMCgbTc) was particularly influential in understanding optimization techniques like dirty rects.
+This project was heavily inspired by [Noita](https://noitagame.com/), a physics-based action game with incredible
+particle simulation. The [GDC talk on Noita's simulation](https://www.youtube.com/watch?v=prXuyMCgbTc) was particularly
+influential in understanding optimization techniques like dirty rects.
 
 ## Tested On
 
