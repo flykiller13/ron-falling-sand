@@ -39,3 +39,38 @@
 
 # debug information files
 *.dwo
+
+# Build directories
+build/
+cmake-build-*/
+out/
+bin/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+*.cmake
+!CMakeLists.txt
+.cmake/
+
+# IDE - IntelliJ IDEA / CLion
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IDE - Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# IDE - Other
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
