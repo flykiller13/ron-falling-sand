@@ -37,10 +37,12 @@ void Input::apply_brush(GLFWwindow *window, Simulation &sim, int brush_size,
   glfwGetWindowSize(window, &width, &height);
   double xpos, ypos;
   glfwGetCursorPos(window, &xpos, &ypos);
-  int x_ratio = width / sim.get_grid_width();
-  int y_ratio = height / sim.get_grid_height();
-  int grid_x = static_cast<int>(xpos) / x_ratio;
-  int grid_y = static_cast<int>(height - ypos) / y_ratio;
+  double x_ratio = static_cast<double>(width) / static_cast<double>(sim.
+                     get_grid_width());
+  double y_ratio = static_cast<double>(height) / static_cast<double>(sim.
+                     get_grid_height());
+  int grid_x = static_cast<int>(xpos / x_ratio);
+  int grid_y = static_cast<int>((height - ypos) / y_ratio);
 
   for (int x = grid_x - brush_size; x <= grid_x + brush_size; x++) {
     for (int y = grid_y - brush_size; y <= grid_y + brush_size; y++) {

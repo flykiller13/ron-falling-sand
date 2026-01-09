@@ -18,7 +18,9 @@ void App::framebuffer_size_callback(GLFWwindow *window, int width,
   }
 }
 
-App::App() : input(), sim(400, 400), renderer(), ui(), window_(nullptr) {
+App::App() : input(), sim(400, 400), renderer(), ui(), window_(nullptr),
+             window_width(800), window_height(800), current_frame(0),
+             delta_time(0) {
 }
 
 bool App::init() {

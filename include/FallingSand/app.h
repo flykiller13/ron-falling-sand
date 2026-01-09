@@ -26,8 +26,8 @@ private:
   UI ui;
 
   GLFWwindow *window_;
-  int window_width = 800;
-  int window_height = 800;
+  int window_width;
+  int window_height;
   double last_frame = 0.0;
   double current_frame, delta_time;
 };
