@@ -1,20 +1,25 @@
 # Falling Sand Simulation
 
-![Falling Sand Demo](cpu_demo.gif)
+![Falling Sand Demo](resources/cpu_demo.gif)
 
 *"From ashes to dust, from CPU to GPU"*
 
-This is the first version of the falling sand simulation. It runs entirely on the **CPU**, using the GPU only to render a texture quad on the screen. This allows us to run a **1000x1000 simulation** at 60 fps.
+This is the first version of the falling sand simulation. It runs entirely on the **CPU**, using the GPU only to render
+a texture quad on the screen. This allows us to run a **1000x1000 simulation** at 60 fps.
 
-I've always been interested in falling sand simulations, but [Noita](https://noitagame.com/) finally inspired me to make one.
+I've always been interested in falling sand simulations, but [Noita](https://noitagame.com/) finally inspired me to make
+one.
 
-> **Note**: This is the CPU branch. For the GPU-accelerated version using compute shaders, check out the [GPU branch](link-to-gpu-branch).
+> **Note**: This is the CPU branch. For the GPU-accelerated version using compute shaders, check out
+> the [GPU branch](link-to-gpu-branch).
 
 ## How It Works
 
 ### Cell Movement Rules
 
-The rules for cell movement are fairly simple. **Sand** checks `down → down-left → down-right` and if one of these is empty, it moves there (swaps). **Water** follows the same pattern but additionally checks `left` and `right`, giving it that characteristic "filling up" effect. **Smoke/Gas** behaves like water but checks upward instead of downward.
+The rules for cell movement are fairly simple. **Sand** checks `down → down-left → down-right` and if one of these is
+empty, it moves there (swaps). **Water** follows the same pattern but additionally checks `left` and `right`, giving it
+that characteristic "filling up" effect. **Smoke/Gas** behaves like water but checks upward instead of downward.
 
 ```cpp
 case CellType::Sand:
@@ -32,17 +37,26 @@ case CellType::Sand:
 
 ### Random Direction Selection
 
-One important mechanic is choosing a **random direction** (left/right) because cells check their neighbors sequentially and their movement direction needs to be known. This gives the cells a more natural feel - without it, you get a bias towards one side. Each cell randomly decides whether to check left or right first, creating that organic, chaotic behavior you'd expect from falling sand.
+One important mechanic is choosing a **random direction** (left/right) because cells check their neighbors sequentially
+and their movement direction needs to be known. This gives the cells a more natural feel - without it, you get a bias
+towards one side. Each cell randomly decides whether to check left or right first, creating that organic, chaotic
+behavior you'd expect from falling sand.
 
 ```cpp
 int dir = (dis(gen) == 0) ? -1 : 1; // Randomly choose left or right
 ```
 
-This is interesting because on the [GPU branch](link-to-gpu-branch), we can't use random since we're using the pull method - cell movement has to be deterministic.
+This is interesting because on the [GPU branch](link-to-gpu-branch), we can't use random since we're using the pull
+method - cell movement has to be deterministic.
 
 ### Iteration Order
 
-When running the simulation, we iterate over each cell in the grid. The **iteration order matters** for correctness - we process left to right, and for each column we process from bottom to top (where y=0 is the bottom). This ensures particles fall naturally and prevents ordering artifacts. We use **double buffering** (reading from `grid`, writing to `next_grid`) to ensure we always have consistent state during the update, then swap buffers after all cells are processed. Without proper iteration order, you could get visual artifacts like particles teleporting or not falling smoothly.
+When running the simulation, we iterate over each cell in the grid. The **iteration order matters** for correctness - we
+process left to right, and for each column we process from bottom to top (where y=0 is the bottom). This ensures
+particles fall naturally and prevents ordering artifacts. We use **double buffering** (reading from `grid`, writing to
+`next_grid`) to ensure we always have consistent state during the update, then swap buffers after all cells are
+processed. Without proper iteration order, you could get visual artifacts like particles teleporting or not falling
+smoothly.
 
 ```cpp
 // Iterate over grid - order matters!
@@ -58,7 +72,9 @@ std::swap(grid.cells, next_grid.cells);
 
 ### Rendering Pipeline
 
-The cells get translated to colors that are saved in a **pixel array**. Each cell type maps to a specific color (sand → yellow, water → blue, stone → grey, etc.). The pixel array is then passed to the **texture quad**, which is displayed on screen.
+The cells get translated to colors that are saved in a **pixel array**. Each cell type maps to a specific color (sand →
+yellow, water → blue, stone → grey, etc.). The pixel array is then passed to the **texture quad**, which is displayed on
+screen.
 
 ```cpp
 // Convert cells to pixel colors
@@ -78,9 +94,12 @@ glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height,
 
 ## Future Optimizations
 
-This simulation can heavily benefit from a **dirty rects** mechanic - updating only areas of the simulation that need to be updated. This is described in [Noita's GDC talk](https://www.youtube.com/watch?v=prXuyMCgbTc). Currently, we iterate over large empty/static areas which wastes a lot of iterations. Might implement this in the future.
+This simulation can heavily benefit from a **dirty rects** mechanic - updating only areas of the simulation that need to
+be updated. This is described in [Noita's GDC talk](https://www.youtube.com/watch?v=prXuyMCgbTc). Currently, we iterate
+over large empty/static areas which wastes a lot of iterations. Might implement this in the future.
 
-Since implementing rules is easier in this CPU version, we can add **velocity/acceleration** pretty easily. Might do that in the future also.
+Since implementing rules is easier in this CPU version, we can add **velocity/acceleration** pretty easily. Might do
+that in the future also.
 
 ## Tested On
 
@@ -186,6 +205,7 @@ FallingSand/
 ## Current Status
 
 The simulation currently supports:
+
 - **Sand** - Falls down and to the sides
 - **Water** - Flows horizontally when it can't fall
 - **Stone** - Static walls
@@ -198,5 +218,3 @@ The grid is configured to 400x400 by default but can handle up to 1000x1000.
 - [ ] Implement dirty rect optimization for static areas
 - [ ] Add velocity/acceleration to particles
 - [ ] Add more particle types (fire, acid, etc.)
-- [ ] Particle interactions (sand + water = mud, etc.)
-- [ ] Performance optimizations (multithreading, SIMD, etc.)
