@@ -208,7 +208,6 @@ The grid is configured to 400x400 by default but can handle much larger resoluti
 - [ ] Complete gas particle behavior
 - [ ] Add more particle types (fire, acid, etc.)
 - [ ] CPU-side simulation for debugging
-- [ ] Particle interactions (sand + water = mud, etc.)
 
 ---
 
