@@ -9,6 +9,9 @@ A high-performance GPU-accelerated falling sand simulation built with OpenGL com
 I've always been interested in falling sand simulations, but [Noita](https://noitagame.com/) finally inspired me to make
 one.
 
+> **Note**: This is the GPU branch. For the CPU version check out
+> the [CPU branch](https://github.com/flykiller13/ron-falling-sand/tree/cpu).
+
 ## Performance Journey
 
 At first, I used **OpenGL to draw a texture quad** and ran the simulation on the **CPU**. Every tick, I updated each
