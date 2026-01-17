@@ -14,43 +14,36 @@ one.
 
 This project contains two implementations, each with its own strengths:
 
-### 🖥️ [CPU Branch](link-to-cpu-branch)
+### 🖥️ [CPU Branch](https://github.com/flykiller13/ron-falling-sand/tree/cpu)
 
 The original implementation that runs entirely on the CPU. Perfect for understanding the core simulation logic and
 experimenting with new particle types.
 
 - **Performance**: Runs **1000x1000 grids** at 60 fps
-- **Pros**:
+- **Features**:
     - Simple, intuitive codebase
     - Easy to implement new rules and particle types
     - Supports random direction selection for natural-looking behavior
-- **Cons**:
-    - Low performance
 
-### 🚀 [GPU Branch](link-to-gpu-branch)
+### 🚀 [GPU Branch](https://github.com/flykiller13/ron-falling-sand/tree/gpu)
 
 A high-performance GPU-accelerated version using OpenGL compute shaders. Leverages your GPU's parallel processing power
 for massive simulations.
 
 - **Performance**: Runs **2560x1440 grids** (3,686,400 cells!) at 60 fps
-- **Pros**:
+- **Features**:
     - Massive performance boost
     - Handles huge simulations smoothly
     - Direct GPU rendering pipeline
-
-- **Cons**:
     - Uses unintuitive "pull method" to avoid race conditions
 
-## Features
-
-Both branches support:
+#### Both branches support:
 
 - **Sand** - Falls down and spreads to the sides
 - **Water** - Flows horizontally when it can't fall
 - **Stone** - Static walls and structures
 - **Gas** - Rises up and spreads horizontally
 - Interactive brush tool with adjustable size
-- Real-time rendering with OpenGL
 
 ## Quick Start
 
@@ -76,7 +69,7 @@ See the individual branch READMEs for detailed setup instructions.
 
 This project was heavily inspired by [Noita](https://noitagame.com/), a physics-based action game with incredible
 particle simulation. The [GDC talk on Noita's simulation](https://www.youtube.com/watch?v=prXuyMCgbTc) was particularly
-influential in understanding optimization techniques like dirty rects.
+influential in understanding optimization techniques like dirty rects and multithreading.
 
 ## Tested On
 
