@@ -11,7 +11,7 @@ I've always been interested in falling sand simulations, but [Noita](https://noi
 one.
 
 > **Note**: This is the CPU branch. For the GPU-accelerated version using compute shaders, check out
-> the [GPU branch](link-to-gpu-branch).
+> the [GPU branch](https://github.com/flykiller13/ron-falling-sand/tree/gpu).
 
 ## How It Works
 
