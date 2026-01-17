@@ -20,7 +20,7 @@ public:
   // Updates the pixel array and the texture quad with the simulation data
   void cleanup(); // Deletes gl objects
 
-  uint32_t color_to_agbr(const Color &color);
+  uint32_t color_to_abgr(const Color &color);
   // Converts color (RGBA) to int32 (ABGR)
 
 private:

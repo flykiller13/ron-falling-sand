@@ -114,22 +114,22 @@ void Renderer::update(const Simulation &sim) {
     Cell cell = cells[i];
     switch (cell.type) {
     case CellType::Sand:
-      pixels[i] = color_to_agbr(yellow);
+      pixels[i] = color_to_abgr(yellow);
       break;
     case CellType::Water:
-      pixels[i] = color_to_agbr(blue);
+      pixels[i] = color_to_abgr(blue);
       break;
     case CellType::Gas:
-      pixels[i] = color_to_agbr(gas);
+      pixels[i] = color_to_abgr(gas);
       break;
     case CellType::Stone:
-      pixels[i] = color_to_agbr(grey);
+      pixels[i] = color_to_abgr(grey);
       break;
     case CellType::Empty:
-      pixels[i] = color_to_agbr(black);
+      pixels[i] = color_to_abgr(black);
       break;
     default: // debug color is used to see the particles
-      pixels[i] = color_to_agbr(debug);
+      pixels[i] = color_to_abgr(debug);
       break;
 
     }
@@ -148,7 +148,7 @@ void Renderer::cleanup() {
   glDeleteTextures(1, &texture_id_);
 }
 
-uint32_t Renderer::color_to_agbr(const Color &color) {
+uint32_t Renderer::color_to_abgr(const Color &color) {
 
   return (static_cast<uint32_t>(color.a << 24)
           | static_cast<uint32_t>(color.b << 16)
